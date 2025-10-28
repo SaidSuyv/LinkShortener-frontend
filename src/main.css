@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+@theme {
+  --text-color: #fff;
+  --secondary-color: #b4c5e4;
+  --contrast-color: #090c9b;
+  --background-color: #3c3744;
+}
+
+html,
+body,
+div#app {
+  min-height: 100dvh;
+  height: 100%;
+  font-family: 'Instrumental Sans', sans-serif !important;
+  color: var(--text-color);
+}
+
+div#app {
+  background-color: var(--background-color);
+}
