@@ -18,7 +18,11 @@ AxiosClient.interceptors.request.use(
 
 // RESPONSE
 AxiosClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (typeof response.data.success != 'undefined' && response.data.success == false)
+      throw new Error("Hubo un error causa");
+    return response;
+  },
   (error) => {
     return Promise.reject(error)
   },
