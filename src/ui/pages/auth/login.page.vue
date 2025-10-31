@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import LogoImage from '/logo.png'
 import { LoginUseCase } from '@/application/use-cases/auth/login.usecase'
 import { AuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
 import { useUserStore } from '@/ui/stores/user.store'
+import LogoComponent from '@/ui/components/utils/logo.component.vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 
@@ -50,11 +50,7 @@ const onSubmit = async () => {
     @submit.prevent="onSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
-    <div class="flex flex-col gap-1">
-      <img class="max-w-[100px] m-auto" :src="LogoImage" alt="Logo Oficial" />
-      <p class="text-lg text-center font-display mt-3">Link Shortener</p>
-      <p class="text-sm text-center text-white/30">by SaidSuyv</p>
-    </div>
+    <LogoComponent />
     <a-input
       v-model:value="form.email"
       placeholder="Correo electrónico"
@@ -68,6 +64,10 @@ const onSubmit = async () => {
     <a-button type="primary" html-type="submit" class="w-full" :disabled="loading"
       >Iniciar sesión</a-button
     >
+    <p class="text-sm text-center">
+    ¿Eres nuevo(a)? <router-link :to="{ name: 'register' }"><span
+        class="font-bold">Registrate</span></router-link>
+    </p>
     <a-spin size="large" :spinning="loading" />
   </form>
 </template>
