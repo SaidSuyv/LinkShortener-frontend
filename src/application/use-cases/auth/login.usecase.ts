@@ -1,5 +1,5 @@
 import type { UserEntity } from '@/domain/entities/user.entity'
-import { AuthRepository } from '@/domain/repositories/auth.repository'
+import type { AuthRepository } from '@/domain/repositories/auth.repository'
 
 export const LoginUseCase = async (
   authRepo: AuthRepository,

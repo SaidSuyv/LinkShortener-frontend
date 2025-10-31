@@ -12,7 +12,9 @@ const theme = reactive({
 </script>
 
 <template>
-  <a-config-provider :theme="theme">
-    <router-view />
-  </a-config-provider>
+  <a-app class="h-full">
+    <a-config-provider :theme="theme">
+      <router-view />
+    </a-config-provider>
+  </a-app>
 </template>

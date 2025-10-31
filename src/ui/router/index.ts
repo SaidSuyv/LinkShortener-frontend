@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import LoginPage from '../pages/auth/login.page.vue'
 import RegisterPage from '../pages/auth/register.page.vue'
+import ForgotPasswordPage from '../pages/auth/forgot-password.page.vue'
+import ResetPasswordPage from '../pages/auth/reset-password.page.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -9,10 +11,20 @@ const routes: RouteRecordRaw[] = [
     component: LoginPage,
   },
   {
-    path: 'register',
+    path: '/register',
     name: 'register',
-    component: RegisterPage
-  }
+    component: RegisterPage,
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPasswordPage,
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPasswordPage,
+  },
 ]
 
 const router = createRouter({

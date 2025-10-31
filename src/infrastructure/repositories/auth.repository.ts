@@ -21,21 +21,43 @@ export class AuthRepositoryImpl extends AuthRepository {
     return
   }
 
-  async register(name: string, lastname: string, email: string, password: string, confirm_password: string): Promise<UserEntity> {
-    const { data } = await AxiosClient.post<RegisterResponseDTO>('/register', { name, lastname, email, password, confirm_password });
+  async register(
+    name: string,
+    lastname: string,
+    email: string,
+    password: string,
+    password_confirmation: string,
+  ): Promise<UserEntity> {
+    const { data } = await AxiosClient.post<RegisterResponseDTO>('/register', {
+      name,
+      lastname,
+      email,
+      password,
+      password_confirmation,
+    })
     return {
       name: data.data.user.name,
       lastname: data.data.user.lastname,
       full_name: data.data.user.full_name,
       email: data.data.user.email,
       token: data.data.token,
-    };
+    }
   }
 
   async forgotPassword(email: string): Promise<void> {
-    throw new Error('Method not implemented.')
+    await AxiosClient.post<{ success: boolean; message: string }>('/forgot-password', { email })
   }
-  async resetPassword(email: string, password: string, confirm_password: string, token: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  async resetPassword(
+    email: string,
+    password: string,
+    password_confirmation: string,
+    token: string,
+  ): Promise<void> {
+    await AxiosClient.post<{ success: boolean; message: string }>('/reset-password', {
+      email,
+      password,
+      password_confirmation,
+      token,
+    })
   }
 }

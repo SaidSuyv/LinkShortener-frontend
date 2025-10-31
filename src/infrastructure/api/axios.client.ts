@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { isAxiosError, type AxiosInstance } from 'axios'
 
 const AxiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -20,11 +20,16 @@ AxiosClient.interceptors.request.use(
 AxiosClient.interceptors.response.use(
   (response) => {
     if (typeof response.data.success != 'undefined' && response.data.success == false)
-      throw new Error("Hubo un error causa");
-    return response;
+      throw new Error('Hubo un error causa')
+    return response
   },
   (error) => {
-    return Promise.reject(error)
+    if (isAxiosError(error)) {
+      if (typeof error.response?.data != 'undefined') {
+        console.log(error.response.data.message)
+        return Promise.reject(new Error(error.response.data.message))
+      } else return Promise.reject('Hubo un error con el servidor, intentelo más tarde.')
+    } else return Promise.reject(error)
   },
 )
 
