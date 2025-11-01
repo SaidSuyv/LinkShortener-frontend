@@ -11,6 +11,7 @@ const AxiosClient: AxiosInstance = axios.create({
 // REQUEST
 AxiosClient.interceptors.request.use(
   (config) => {
+    console.log('see config', config)
     return config
   },
   (error) => Promise.reject(error),

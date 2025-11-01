@@ -1,25 +1,44 @@
 <script setup lang="ts">
-  import { HomeOutlined, PaperClipOutlined, SettingOutlined } from '@ant-design/icons-vue'
-  interface MenuItem {
-    icon?: string;
-    label?: string;
-    route?: string;
-    children?: MenuItem[]
-  }
+import { HomeOutlined, PaperClipOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import type { ItemType, MenuProps } from 'ant-design-vue'
+import { h, reactive, VueElement } from 'vue'
+import { useRouter } from 'vue-router'
 
-  const menu: MenuItem[] = [
-    { icon: HomeOutlined, label: "Inicio", route: "home" },
-    { icon: PaperClipOutlined, label: "Mis Links", route: "links" },
-    { icon: SettingOutlined, label: "Configuracion", route: "settings" }
-  ]
+const router = useRouter()
+
+function getItem(
+  label: VueElement | string,
+  key: string,
+  icon?: any,
+  children?: ItemType[],
+  type?: 'group',
+): ItemType {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  } as ItemType
+}
+
+const items: ItemType[] = reactive([
+  getItem('Inicio', 'home', () => h(HomeOutlined)),
+  getItem('Mis Links', 'links', () => h(PaperClipOutlined)),
+  getItem('Configuración', 'settings', () => h(SettingOutlined)),
+])
+
+const handleAction: MenuProps['onClick'] = (e) => {
+  const name: string = e.key as string
+  router.push({ name })
+}
 </script>
 <template>
-  <a-menu mode="inline" class="!bg-transparent !border-0">
-    <a-menu-item v-for="(item, index) in menu" :key="index">
-      <router-link :to="{ name: item.route }">
-      <component :is="item.icon" />
-      <span>{{ item.label }}</span>
-      </router-link>
-    </a-menu-item>
-  </a-menu>
+  <a-menu
+    id="main-menu"
+    mode="inline"
+    :items="items"
+    @click="handleAction"
+    class="!bg-transparent !border-0"
+  />
 </template>

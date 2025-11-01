@@ -1,4 +1,4 @@
 <script setup></script>
 <template>
-©LinkShortener 2025 — All rights reserved
+  <p class="text-center text-stone-500">©LinkShortener 2025 — All rights reserved</p>
 </template>

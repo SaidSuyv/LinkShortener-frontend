@@ -35,6 +35,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dashboard',
     name: 'dashboard',
+    redirect: { name: 'home' },
     component: DashboardLayout,
     children: [
       {
@@ -64,7 +65,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const user = useUserStore()
 
-  if( to.path.includes('dashboard') && !user.isAuthenticated() )
+  if (to.path.includes('dashboard') && !user.isAuthenticated())
     return { name: 'login' }
 })
 
