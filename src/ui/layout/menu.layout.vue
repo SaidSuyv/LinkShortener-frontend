@@ -14,7 +14,7 @@
   ]
 </script>
 <template>
-  <a-menu mode="inline" style="background-color: transparent;">
+  <a-menu mode="inline" class="!bg-transparent !border-0">
     <a-menu-item v-for="(item, index) in menu" :key="index">
       <router-link :to="{ name: item.route }">
       <component :is="item.icon" />

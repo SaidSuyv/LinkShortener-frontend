@@ -35,7 +35,7 @@ const onSubmit = async () => {
     )
     userStore.setPersonalData({ name, lastname, full_name, email })
     userStore.setAuthData(token)
-    router.replace('dashboard')
+    router.push({ name: 'dashboard' })
   } catch (e: any) {
     message.error(e.message)
   }

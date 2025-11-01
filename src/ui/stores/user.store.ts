@@ -27,5 +27,17 @@ export const useUserStore = defineStore('user', () => {
     user.token = token
   }
 
-  return { user, setPersonalData, setAuthData }
+  function clearData() {
+    user.name = ''
+    user.lastname = ''
+    user.full_name = ''
+    user.email = ''
+    user.token = ''
+  }
+
+  function isAuthenticated(): boolean {
+    return !( user.token.trim().length == 0 )
+  }
+
+  return { user, setPersonalData, setAuthData, clearData, isAuthenticated }
 })

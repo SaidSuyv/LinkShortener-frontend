@@ -4,6 +4,8 @@ import RegisterPage from '../pages/auth/register.page.vue'
 import ForgotPasswordPage from '../pages/auth/forgot-password.page.vue'
 import ResetPasswordPage from '../pages/auth/reset-password.page.vue'
 
+import { useUserStore } from '@/ui/stores/user.store'
+
 import DashboardLayout from '../layout/dashboard.layout.vue'
 import HomePage from '../pages/dashboard/home.page.vue'
 import LinksPage from '../pages/dashboard/links.page.vue'
@@ -41,12 +43,12 @@ const routes: RouteRecordRaw[] = [
         component: HomePage
       },
       {
-        path: '/links',
+        path: '/dashboard/links',
         name: 'links',
         component: LinksPage,
       },
       {
-        path: '/settings',
+        path: '/dashboard/settings',
         name: 'settings',
         component: SettingsPage,
       }
@@ -57,6 +59,13 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+router.beforeEach((to, from) => {
+  const user = useUserStore()
+
+  if( to.path.includes('dashboard') && !user.isAuthenticated() )
+    return { name: 'login' }
 })
 
 export default router

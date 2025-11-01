@@ -12,7 +12,9 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-content>
-        <router-view></router-view>
+        <div class="p-5">
+          <router-view></router-view>
+        </div>
       </a-layout-content>
       <a-layout-footer>
         <FooterLayout/>
