@@ -72,7 +72,7 @@ const onSubmit = async () => {
     @submit.prevent="onSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
-    <LogoComponent :logow="80" />
+    <LogoComponent />
     <p class="text-xl font-semibold">Restablecer la contraseña</p>
     <a-input-password
       v-model:value="form.password"

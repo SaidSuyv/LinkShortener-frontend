@@ -55,7 +55,7 @@ const onSubmit = async () => {
     @submit.prevent="onSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
-    <LogoComponent :logow="80" />
+    <LogoComponent />
     <p class="w-full text-lg text-semibold">Información personal</p>
     <a-input v-model:value="form.name" placeholder="Nombres" :disabled="loading" />
     <a-input v-model:value="form.lastname" placeholder="Apellidos" :disabled="loading" />
