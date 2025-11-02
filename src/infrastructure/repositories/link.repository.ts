@@ -5,8 +5,9 @@ import type { AllLinkResponseDTO } from "../DTO/link.dto";
 
 export class LinkRepositoryImpl extends LinkRepository {
     async getAll(): Promise<LinkEntity[]> {
-        const response = await AxiosClient.get<AllLinkResponseDTO>('/link');
-        return response.data.data
+        await AxiosClient.get('/sanctum/csrf-cookie');
+        const { data } = await AxiosClient.get<AllLinkResponseDTO>('/link');
+        return data.data
     }
     update(id: number, data: any): Promise<void> {
         throw new Error("Method not implemented.");

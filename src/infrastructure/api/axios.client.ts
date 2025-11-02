@@ -3,7 +3,7 @@ import axios, { isAxiosError, type AxiosInstance } from 'axios'
 const AxiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   },
   timeout: 5000,
 })
@@ -11,7 +11,6 @@ const AxiosClient: AxiosInstance = axios.create({
 // REQUEST
 AxiosClient.interceptors.request.use(
   (config) => {
-    console.log('see config', config)
     return config
   },
   (error) => Promise.reject(error),

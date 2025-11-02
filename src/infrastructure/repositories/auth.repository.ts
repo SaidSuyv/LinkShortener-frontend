@@ -3,9 +3,11 @@ import { AuthRepository } from '@/domain/repositories/auth.repository'
 import AxiosClient from '../api/axios.client'
 import type { UserResponseDTO } from '../DTO/auth/login.dto'
 import type { RegisterResponseDTO } from '../DTO/auth/register.dto'
+import axios from 'axios'
 
 export class AuthRepositoryImpl extends AuthRepository {
   async login(email: String, password: String): Promise<UserEntity> {
+    await AxiosClient.get('/sanctum/csrf-cookie');
     const { data } = await AxiosClient.post<UserResponseDTO>('/login', { email, password })
 
     return {
