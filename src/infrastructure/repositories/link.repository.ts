@@ -3,10 +3,14 @@ import { LinkRepository } from "@/domain/repositories/link.repository";
 import AxiosClient from "../api/axios.client";
 import type { AllLinkResponseDTO } from "../DTO/link.dto";
 
+import { TokenStorageService } from '../services/token-storage.service'
+
 export class LinkRepositoryImpl extends LinkRepository {
+
+  private TokenServiceInstance = new TokenStorageService()
+
     async getAll(): Promise<LinkEntity[]> {
-        await AxiosClient.get('/sanctum/csrf-cookie');
-        const { data } = await AxiosClient.get<AllLinkResponseDTO>('/link');
+        const { data } = await AxiosClient.get<AllLinkResponseDTO>('/link', { token: true } );
         return data.data
     }
     update(id: number, data: any): Promise<void> {

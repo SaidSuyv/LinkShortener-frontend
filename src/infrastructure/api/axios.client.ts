@@ -11,6 +11,15 @@ const AxiosClient: AxiosInstance = axios.create({
 // REQUEST
 AxiosClient.interceptors.request.use(
   (config) => {
+    console.log("show config", config)
+    if( config.token )
+    {
+      console.log("adding token")
+      const token = localStorage.getItem(import.meta.env.VITE_STORE_TOKEN_NAME)
+      if( token == null ) throw new Error('Token unavailable')
+      config.headers.Authorization = `Bearer ${token}`
+      console.log("config changed", config)
+    }
     return config
   },
   (error) => Promise.reject(error),

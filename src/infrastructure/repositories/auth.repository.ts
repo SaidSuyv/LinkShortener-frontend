@@ -7,7 +7,6 @@ import axios from 'axios'
 
 export class AuthRepositoryImpl extends AuthRepository {
   async login(email: String, password: String): Promise<UserEntity> {
-    await AxiosClient.get('/sanctum/csrf-cookie');
     const { data } = await AxiosClient.post<UserResponseDTO>('/login', { email, password })
 
     return {
@@ -20,7 +19,7 @@ export class AuthRepositoryImpl extends AuthRepository {
   }
 
   async logout(): Promise<void> {
-    return
+    const { data } = await AxiosClient.get('/logout', { token: true });
   }
 
   async register(

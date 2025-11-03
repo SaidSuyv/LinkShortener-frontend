@@ -7,12 +7,12 @@ const collapsed = ref<boolean>(true)
 </script>
 <template>
   <a-layout style="min-height: 100dvh">
-    <a-layout-sider v-model:collapsed="collapsed" collapsible>
+    <a-layout-sider v-model:collapsed="collapsed" collapsible breakpoint="lg" collapsed-width="0">
       <SidebarLayout :collapsed="collapsed" />
     </a-layout-sider>
     <a-layout>
       <a-layout-content>
-        <div class="p-5 h-full">
+        <div class="p-5 h-full flex flex-col gap-5">
           <router-view></router-view>
         </div>
       </a-layout-content>
