@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { LoginUseCase } from '@/application/use-cases/auth/login.usecase'
-import { AuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { RemoteAuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
 import { useUserStore } from '@/ui/stores/user.store'
 import LogoComponent from '@/ui/components/utils/logo.component.vue'
 import { useRouter } from 'vue-router'
 import { App } from 'ant-design-vue'
+import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
 
 interface FormScheme {
   email: string
@@ -25,18 +26,19 @@ const router = useRouter()
 
 const { message } = App.useApp()
 
-const onSubmit = async () => {
+const handleSubmit = async () => {
   loading.value = true
   try {
-    const { name, lastname, email, full_name, token } = await LoginUseCase(
-      new AuthRepositoryImpl(),
-      form.email,
-      form.password
-    )
-    userStore.setPersonalData({ name, lastname, full_name, email })
-    userStore.setAuthData(token)
+    const tokenService = new AuthTokenStorage()
+    const provider = new RemoteAuthRepositoryImpl(tokenService)
+    const useCase = new LoginUseCase(provider)
+
+    const response = await useCase.execute(form.email, form.password)
+    userStore.setPersonalData(response)
+
     router.push({ name: 'dashboard' })
   } catch (e: any) {
+    console.log('login error', e)
     message.error(e.message)
   }
   loading.value = false
@@ -44,10 +46,10 @@ const onSubmit = async () => {
 </script>
 <template>
   <form
-    @submit.prevent="onSubmit"
+    @submit.prevent="handleSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
-  <LogoComponent orientation="vertical" logow="max-w-[80px] md:max-w-[100px]" />
+    <LogoComponent orientation="vertical" logow="max-w-[80px] md:max-w-[100px]" />
     <a-input
       v-model:value="form.email"
       placeholder="Correo electrónico"

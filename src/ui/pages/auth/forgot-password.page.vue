@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ForgotPasswordUseCase } from '@/application/use-cases/auth/forgot-password.usecase'
-import { AuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { RemoteAuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
 import LogoComponent from '@/ui/components/utils/logo.component.vue'
 import { App } from 'ant-design-vue'
 import { ref } from 'vue'
@@ -13,7 +14,10 @@ const { message, notification } = App.useApp()
 const onSubmit = async () => {
   loading.value = true
   try {
-    await ForgotPasswordUseCase(new AuthRepositoryImpl(), email.value)
+    const tokenService = new AuthTokenStorage()
+    const provider = new RemoteAuthRepositoryImpl(tokenService)
+    const useCase = new ForgotPasswordUseCase(provider)
+    await useCase.execute(email.value)
     notification.success({ message: '¡Correo enviado con éxito!' })
   } catch (e: any) {
     message.error(e.message)

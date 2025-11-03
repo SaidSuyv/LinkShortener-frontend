@@ -1,8 +1,9 @@
-import type { UserEntity } from '@/domain/entities/user.entity'
-import type { AuthRepository } from '@/domain/repositories/auth.repository'
+import type { RemoteAuthRepository } from '@/domain/repositories/auth.repository'
 
-export const LogoutUseCase = async (
-  authRepo: AuthRepository
-): Promise<void> => {
-  return await authRepo.logout()
+export class LogoutUseCase {
+  constructor(private readonly provider: RemoteAuthRepository) {}
+
+  execute(): Promise<void> {
+    return this.provider.logout()
+  }
 }

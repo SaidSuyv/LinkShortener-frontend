@@ -1,10 +1,10 @@
 import type { UserEntity } from '@/domain/entities/user.entity'
-import type { AuthRepository } from '@/domain/repositories/auth.repository'
+import type { RemoteAuthRepository } from '@/domain/repositories/auth.repository'
 
-export const LoginUseCase = async (
-  authRepo: AuthRepository,
-  email: string,
-  password: string,
-): Promise<UserEntity> => {
-  return await authRepo.login(email, password)
+export class LoginUseCase {
+  constructor(private readonly provider: RemoteAuthRepository) {}
+
+  execute(email: string, password: string): Promise<UserEntity> {
+    return this.provider.login(email, password)
+  }
 }

@@ -3,10 +3,10 @@ import { useUserStore } from '@/ui/stores/user.store'
 import LogoComponent from '@/ui/components/utils/logo.component.vue'
 import { useRouter } from 'vue-router'
 import { App } from 'ant-design-vue'
-import { AuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { RemoteAuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
 import { reactive, ref } from 'vue'
-import { LoginUseCase } from '@/application/use-cases/auth/login.usecase'
 import { RegisterUseCase } from '@/application/use-cases/auth/register.usecase'
+import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
 
 interface FormScheme {
   name: string
@@ -30,19 +30,20 @@ const router = useRouter()
 
 const { message } = App.useApp()
 
-const onSubmit = async () => {
+const handleSubmit = async () => {
   loading.value = true
   try {
-    const { name, lastname, email, full_name, token } = await RegisterUseCase(
-      new AuthRepositoryImpl(),
+    const tokenService = new AuthTokenStorage()
+    const provider = new RemoteAuthRepositoryImpl(tokenService)
+    const useCase = new RegisterUseCase(provider)
+    const response = await useCase.execute(
       form.name,
       form.lastname,
       form.email,
       form.password,
       form.password_confirmation
     )
-    userStore.setPersonalData({ name, lastname, full_name, email })
-    userStore.setAuthData(token)
+    userStore.setPersonalData(response)
     router.replace('dashboard')
   } catch (e: any) {
     message.error(e.message)
@@ -52,7 +53,7 @@ const onSubmit = async () => {
 </script>
 <template>
   <form
-    @submit.prevent="onSubmit"
+    @submit.prevent="handleSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
     <LogoComponent />

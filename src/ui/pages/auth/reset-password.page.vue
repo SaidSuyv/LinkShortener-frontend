@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ResetPasswordUseCase } from '@/application/use-cases/auth/reset-password.usecase'
-import { AuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { RemoteAuthRepositoryImpl } from '@/infrastructure/repositories/auth.repository'
+import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
 import LogoComponent from '@/ui/components/utils/logo.component.vue'
 import { App } from 'ant-design-vue'
 import { reactive, ref, watch } from 'vue'
@@ -44,16 +45,13 @@ async function fetchData(params: any) {
   loading.value = false
 }
 
-const onSubmit = async () => {
+const handleSubmit = async () => {
   loading.value = true
   try {
-    await ResetPasswordUseCase(
-      new AuthRepositoryImpl(),
-      form.email,
-      form.password,
-      form.password_confirmation,
-      form.token
-    )
+    const tokenService = new AuthTokenStorage()
+    const provider = new RemoteAuthRepositoryImpl(tokenService)
+    const useCase = new ResetPasswordUseCase(provider)
+    await useCase.execute(form.email, form.password, form.password_confirmation, form.token)
     notification.success({
       message: '¡La contraseña se ha restablecido correctamente!',
       duration: 1000,
@@ -69,7 +67,7 @@ const onSubmit = async () => {
 </script>
 <template>
   <form
-    @submit.prevent="onSubmit"
+    @submit.prevent="handleSubmit"
     class="h-full w-full max-w-[300px] m-auto flex flex-col items-center justify-center gap-5 p-4"
   >
     <LogoComponent />

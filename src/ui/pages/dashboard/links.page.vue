@@ -2,6 +2,9 @@
 import { GetAllLinksUseCase } from '@/application/use-cases/link/get-all.usecase'
 import { LinkRepositoryImpl } from '@/infrastructure/repositories/link.repository'
 import { onMounted, ref } from 'vue'
+import pageHeaderComponent from '@/ui/components/utils/page-header.component.vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import CreateLinkDialog from './links/components/create-link.dialog.vue'
 
 const columns = [
   {
@@ -21,11 +24,21 @@ const columns = [
     title: 'Fecha de creación',
     dataIndex: 'created_at',
     sorter: true,
-    responsive: ['md']
+    responsive: ['md'],
   },
 ]
 
 const items = ref<any[]>([])
+
+const CreateLinkDialogRef = ref<InstanceType<typeof CreateLinkDialog>>()
+
+const handleDialogOpen = () => {
+  console.log('handleDialogOpen')
+  if (CreateLinkDialogRef.value) {
+    console.log('dialog disque existe')
+    CreateLinkDialogRef.value.onOpenDialog()
+  } else console.log('dialog no existe')
+}
 
 const onFetchData = async () => {
   const data = await GetAllLinksUseCase(new LinkRepositoryImpl())
@@ -40,7 +53,14 @@ onMounted(() => {
 })
 </script>
 <template>
-  <h1 class="text-2xl font-semibold">Mis links</h1>
+  <create-link-dialog ref="CreateLinkDialogRef" />
+  <page-header-component title="Mis links" />
+  <a-space>
+    <a-button type="primary" class="!flex items-center justify-center" @click="handleDialogOpen">
+      <plus-outlined />
+      <span>Crear nuevo link</span>
+    </a-button>
+  </a-space>
   <div class="max-x-[100%] overflow-auto">
     <a-table :dataSource="items" :columns="columns" />
   </div>

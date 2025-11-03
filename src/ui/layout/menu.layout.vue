@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { HomeOutlined, PaperClipOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import type { ItemType, MenuProps } from 'ant-design-vue'
-import { h, reactive, VueElement } from 'vue'
-import { useRouter } from 'vue-router'
+import { h, reactive, ref, VueElement, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -11,7 +11,7 @@ function getItem(
   key: string,
   icon?: any,
   children?: ItemType[],
-  type?: 'group',
+  type?: 'group'
 ): ItemType {
   return {
     key,
@@ -32,11 +32,14 @@ const handleAction: MenuProps['onClick'] = (e) => {
   const name: string = e.key as string
   router.push({ name })
 }
+
+const selectedKeys = ref<string[]>(['home'])
 </script>
 <template>
   <a-menu
     id="main-menu"
     mode="inline"
+    v-model:selectedKeys="selectedKeys"
     :items="items"
     @click="handleAction"
     class="!bg-transparent !border-0"

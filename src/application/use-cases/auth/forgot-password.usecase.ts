@@ -1,5 +1,9 @@
-import type { AuthRepository } from '@/domain/repositories/auth.repository'
+import type { RemoteAuthRepository } from '@/domain/repositories/auth.repository'
 
-export const ForgotPasswordUseCase = async (repo: AuthRepository, email: string): Promise<void> => {
-  return await repo.forgotPassword(email)
+export class ForgotPasswordUseCase {
+  constructor(private readonly provider: RemoteAuthRepository) {}
+
+  execute(email: string): Promise<void> {
+    return this.provider.forgotPassword(email)
+  }
 }

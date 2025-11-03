@@ -10,6 +10,8 @@ import DashboardLayout from '../layout/dashboard.layout.vue'
 import HomePage from '../pages/dashboard/home.page.vue'
 import LinksPage from '../pages/dashboard/links.page.vue'
 import SettingsPage from '../pages/dashboard/settings.page.vue'
+import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
+import { CheckAuthStatus } from '@/application/use-cases/auth/check-status.usecase'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -39,9 +41,9 @@ const routes: RouteRecordRaw[] = [
     component: DashboardLayout,
     children: [
       {
-        path: '',
+        path: '/dashboard/home',
         name: 'home',
-        component: HomePage
+        component: HomePage,
       },
       {
         path: '/dashboard/links',
@@ -52,9 +54,9 @@ const routes: RouteRecordRaw[] = [
         path: '/dashboard/settings',
         name: 'settings',
         component: SettingsPage,
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]
 
 const router = createRouter({
@@ -62,11 +64,12 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from) => {
-  const user = useUserStore()
+const tokenService = new AuthTokenStorage()
 
-  if (to.path.includes('dashboard') && !user.isAuthenticated())
-    return { name: 'login' }
+router.beforeEach((to, from) => {
+  const useCase = new CheckAuthStatus(tokenService)
+  const isAuthenticated = useCase.execute()
+  if (to.path.includes('dashboard') && !isAuthenticated) return { name: 'login' }
 })
 
 export default router

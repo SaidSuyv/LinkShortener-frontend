@@ -8,7 +8,6 @@ export const useUserStore = defineStore('user', () => {
     lastname: '',
     full_name: '',
     email: '',
-    token: localStorage.getItem(import.meta.env.VITE_STORE_TOKEN_NAME)
   })
 
   function setPersonalData(data: {
@@ -23,24 +22,12 @@ export const useUserStore = defineStore('user', () => {
     user.email = data.email
   }
 
-  function setAuthData(token: string) {
-    user.token = token
-    localStorage.setItem(import.meta.env.VITE_STORE_TOKEN_NAME, token)
-  }
-
   function clearData() {
     user.name = ''
     user.lastname = ''
     user.full_name = ''
     user.email = ''
-    user.token = ''
-
-    localStorage.removeItem(import.meta.env.VITE_STORE_TOKEN_NAME)
   }
 
-  function isAuthenticated(): boolean {
-    return !!user.token;
-  }
-
-  return { user, setPersonalData, setAuthData, clearData, isAuthenticated }
+  return { user, setPersonalData, clearData }
 })

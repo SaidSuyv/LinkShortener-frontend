@@ -1,25 +1,30 @@
 import type { UserEntity } from '@/domain/entities/user.entity'
-import { AuthRepository } from '@/domain/repositories/auth.repository'
+import { RemoteAuthRepository } from '@/domain/repositories/auth.repository'
 import AxiosClient from '../api/axios.client'
-import type { UserResponseDTO } from '../DTO/auth/login.dto'
-import type { RegisterResponseDTO } from '../DTO/auth/register.dto'
-import axios from 'axios'
+import { LoginApiMapper } from '../mappers/auth/login.mapper'
+import { RegisterApiMapper } from '../mappers/auth/register.mapper'
+import { AuthTokenStorage } from '../services/auth-token-storage.service'
+import type { LoginApiResponse } from '../mappers/auth/login.response'
+import type { RegisterApiResponse } from '../mappers/auth/register.response'
 
-export class AuthRepositoryImpl extends AuthRepository {
+export class RemoteAuthRepositoryImpl extends RemoteAuthRepository {
+  constructor(private readonly authTokenStorage: AuthTokenStorage) {
+    super()
+  }
+
   async login(email: String, password: String): Promise<UserEntity> {
-    const { data } = await AxiosClient.post<UserResponseDTO>('/login', { email, password })
+    const { data } = await AxiosClient.post<LoginApiResponse>('/login', { email, password })
 
-    return {
-      name: data.data.user.name,
-      lastname: data.data.user.lastname,
-      full_name: data.data.user.full_name,
-      email: data.data.user.email,
-      token: data.data.token,
-    }
+    const LoginApiMapperInstance = new LoginApiMapper(data)
+
+    this.authTokenStorage.save(LoginApiMapperInstance.getToken())
+
+    return LoginApiMapperInstance.toDomainUser()
   }
 
   async logout(): Promise<void> {
-    const { data } = await AxiosClient.get('/logout', { token: true });
+    await AxiosClient.get('/logout')
+    this.authTokenStorage.clear()
   }
 
   async register(
@@ -29,36 +34,26 @@ export class AuthRepositoryImpl extends AuthRepository {
     password: string,
     password_confirmation: string,
   ): Promise<UserEntity> {
-    const { data } = await AxiosClient.post<RegisterResponseDTO>('/register', {
-      name,
-      lastname,
-      email,
-      password,
-      password_confirmation,
-    })
-    return {
-      name: data.data.user.name,
-      lastname: data.data.user.lastname,
-      full_name: data.data.user.full_name,
-      email: data.data.user.email,
-      token: data.data.token,
-    }
+    const body = { name, lastname, email, password, password_confirmation }
+
+    const { data } = await AxiosClient.post<RegisterApiResponse>('/register', body)
+
+    const RegisterApiMapperInstance = new RegisterApiMapper(data)
+
+    return RegisterApiMapperInstance.toDomainUser()
   }
 
   async forgotPassword(email: string): Promise<void> {
     await AxiosClient.post<{ success: boolean; message: string }>('/forgot-password', { email })
   }
+
   async resetPassword(
     email: string,
     password: string,
     password_confirmation: string,
     token: string,
   ): Promise<void> {
-    await AxiosClient.post<{ success: boolean; message: string }>('/reset-password', {
-      email,
-      password,
-      password_confirmation,
-      token,
-    })
+    const body = { email, password, password_confirmation, token }
+    await AxiosClient.post<{ success: boolean; message: string }>('/reset-password', body)
   }
 }

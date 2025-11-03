@@ -1,4 +1,4 @@
-export interface UserResponseDTO {
+export interface LoginApiResponse {
   success: boolean
   message?: string
   data: {
