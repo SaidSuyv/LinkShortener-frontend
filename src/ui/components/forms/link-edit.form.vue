@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { onBeforeUnmount, onMounted, onUnmounted, reactive, watch } from 'vue'
 import type { Rule } from 'ant-design-vue'
 
 interface PropsScheme {
+  data: {
+    url: string
+  }
   loading: boolean
 }
 
@@ -13,11 +16,11 @@ const props = withDefaults(defineProps<PropsScheme>(), {
 const emit = defineEmits(['ok', 'cancel'])
 
 interface LinkFormScheme {
-  url: string
+  url: string | null
 }
 
 const form = reactive<LinkFormScheme>({
-  url: '',
+  url: null,
 })
 
 const checkUrl = async (_rule: Rule, value: string) => {
@@ -38,6 +41,7 @@ const rules: Record<string, Rule[]> = {
 }
 
 const handleSubmit = (values: any) => {
+  console.log('check submit form', values)
   emit('ok', values)
 }
 
@@ -46,6 +50,15 @@ const handleSubmitFailed = (errorInfo: any) => {
 }
 
 const handleCancel = () => emit('cancel')
+
+watch(
+  props.data,
+  (v) => {
+    console.log('check watch', v)
+    form.url = v.url
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <a-form
@@ -56,14 +69,14 @@ const handleCancel = () => emit('cancel')
     @finishFailed="handleSubmitFailed"
   >
     <a-form-item>
-      <h1 class="text-2xl font-semibold">Crear nuevo link</h1>
+      <h1 class="text-2xl font-semibold">Editar link</h1>
     </a-form-item>
     <a-form-item name="url">
       <label for="original_url" class="block mb-2 font-bold">Url</label>
       <a-input id="original_url" v-model:value="form.url" placeholder="https://example.com" />
     </a-form-item>
     <a-space>
-      <a-button type="primary" html-type="submit">Crear nuevo link</a-button>
+      <a-button type="primary" html-type="submit">Editar link</a-button>
       <a-button type="secondary" ghost @click="handleCancel">Cancelar</a-button>
     </a-space>
   </a-form>

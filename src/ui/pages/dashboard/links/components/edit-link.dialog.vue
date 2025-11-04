@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import linkCreateForm from '@/ui/components/forms/link-create.form.vue'
-import { ref } from 'vue'
+import linkEditForm from '@/ui/components/forms/link-edit.form.vue'
+import { reactive, ref } from 'vue'
 
 import { RemoteLinkRepositoryImpl } from '@/infrastructure/repositories/link.repository'
-import { CreateLinkUseCase } from '@/application/use-cases/link/create.usecase'
+import { EditLinkUseCase } from '@/application/use-cases/link/edit.usecase'
 
 const openDialog = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 
-const onOpenDialog = () => {
+const data = reactive<{ id: number | null; url: string | null }>({
+  id: null,
+  url: null,
+})
+
+const onOpenDialog = (inp: { id: number; url: string }) => {
+  console.log('cheking inp', inp)
+  data.id = inp.id
+  data.url = inp.url
   openDialog.value = true
 }
 
@@ -18,14 +26,15 @@ const onCloseDialog = () => {
 
 const handleSubmit = async (values: any) => {
   const { url } = values
+  const id = data.id
 
   isLoading.value = true
 
   const provider = new RemoteLinkRepositoryImpl()
-  const useCase = new CreateLinkUseCase(provider)
-  await useCase.execute(url)
+  const useCase = new EditLinkUseCase(provider)
+  await useCase.execute(id!, url)
 
-  isLoading.value = true
+  isLoading.value = false
 
   emit('onUploaded')
   onCloseDialog()
@@ -43,6 +52,6 @@ defineExpose({ onOpenDialog })
     :footer="null"
     :closable="false"
   >
-    <link-create-form :loading="isLoading" @ok="handleSubmit" @cancel="onCloseDialog" />
+    <link-edit-form :data="data" :loading="isLoading" @ok="handleSubmit" @cancel="onCloseDialog" />
   </a-modal>
 </template>

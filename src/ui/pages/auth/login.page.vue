@@ -38,7 +38,6 @@ const handleSubmit = async () => {
 
     router.push({ name: 'dashboard' })
   } catch (e: any) {
-    console.log('login error', e)
     message.error(e.message)
   }
   loading.value = false

@@ -5,6 +5,7 @@ import { h, reactive, ref, VueElement, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 function getItem(
   label: VueElement | string,
@@ -34,6 +35,14 @@ const handleAction: MenuProps['onClick'] = (e) => {
 }
 
 const selectedKeys = ref<string[]>(['home'])
+
+watch(
+  () => route.name,
+  (v: any) => {
+    if (!selectedKeys.value.includes(v)) selectedKeys.value = [v]
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <a-menu

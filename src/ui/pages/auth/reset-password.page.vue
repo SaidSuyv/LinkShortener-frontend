@@ -33,8 +33,6 @@ watch(() => route.query, fetchData, { immediate: true })
 async function fetchData(params: any) {
   //   error.value = params = null
   loading.value = true
-
-  console.log('check params', params)
   const { token, email } = params
 
   if (!token || !email) return router.replace({ name: 'login' })

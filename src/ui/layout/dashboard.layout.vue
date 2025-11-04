@@ -1,15 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import SidebarLayout from './sidebar.layout.vue'
 import FooterLayout from './footer.layout.vue'
 import { useLayoutStore } from '../stores/layout.store'
+import { useUserStore } from '../stores/user.store'
+import { RemoteUserRepositoryImpl } from '@/infrastructure/repositories/user.repository'
+import { GetBasicDataUseCase } from '@/application/use-cases/user/get-basic-data.usecase'
 
 const { layout, setCollapsedWidth } = useLayoutStore()
+const { setPersonalData } = useUserStore()
 
 const handleBreakpoint = (isMobile: boolean) => {
   if (isMobile) setCollapsedWidth(0)
   else setCollapsedWidth(80)
 }
+
+const fetchUserData = async () => {
+  const provider = new RemoteUserRepositoryImpl()
+  const useCase = new GetBasicDataUseCase(provider)
+  const response = await useCase.execute()
+
+  setPersonalData(response)
+}
+
+onMounted(() => {
+  fetchUserData()
+})
 </script>
 <template>
   <a-layout style="min-height: 100dvh">

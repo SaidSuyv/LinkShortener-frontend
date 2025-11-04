@@ -9,6 +9,7 @@ const theme = reactive<ThemeConfig>({
     colorPrimary: '#3d52d5',
     colorBgBase: '#3c3744',
     colorPrimaryBg: 'transparent',
+    colorErrorBg: 'transparent',
     colorBgLayout: 'transparent',
   },
 })

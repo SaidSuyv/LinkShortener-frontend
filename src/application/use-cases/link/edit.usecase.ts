@@ -1,9 +1,9 @@
 import { RemoteLinkRepository } from '@/domain/repositories/link.repository.ts'
 
-export class CreateLinkUseCase {
+export class EditLinkUseCase {
   constructor(private readonly provider: RemoteLinkRepository) {}
 
-  execute(url: string): Promise<void> {
-    return this.provider.create(url)
+  execute(id: number, url: string): Promise<void> {
+    return this.provider.update(id, { url })
   }
 }

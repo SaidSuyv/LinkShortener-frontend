@@ -20,7 +20,9 @@ const onLogout = async () => {
 </script>
 <template>
   <page-header-component title="Configuración" />
-  <a-button danger @click="onLogout()" ghost>
-    <span>Cerrar sesión</span>
-  </a-button>
+  <a-space>
+    <a-button danger @click="onLogout()" ghost>
+      <span>Cerrar sesión</span>
+    </a-button>
+  </a-space>
 </template>

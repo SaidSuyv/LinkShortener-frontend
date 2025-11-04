@@ -16,16 +16,18 @@ export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
   async create(url: string): Promise<void> {
     const { data } = await AxiosClient.post('/link', { url })
 
-    console.log('url data response', data)
+    return data.data
+  }
+
+  async update(id: number, updated: any): Promise<void> {
+    const { data } = await AxiosClient.put(`/link/${id}`, updated)
 
     return data.data
   }
 
-  update(id: number, data: any): Promise<void> {
-    throw new Error('Method not implemented.')
-  }
-  remove(id: number): Promise<void> {
-    throw new Error('Method not implemented.')
+  async remove(id: number): Promise<void> {
+    const { data } = await AxiosClient.delete(`/link/${id}`)
+    return data.data
   }
   restore(id: number): Promise<void> {
     throw new Error('Method not implemented.')

@@ -10,7 +10,6 @@ const props = withDefaults(defineProps<BaseDialogScheme>(), { open: false })
 const emit = defineEmits(['state:ok', 'close'])
 
 const handleClose = () => {
-  console.log('check pepepepe')
   emit('close')
 }
 </script>

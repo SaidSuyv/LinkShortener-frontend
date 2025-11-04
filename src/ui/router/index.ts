@@ -8,7 +8,7 @@ import { useUserStore } from '@/ui/stores/user.store'
 
 import DashboardLayout from '../layout/dashboard.layout.vue'
 import HomePage from '../pages/dashboard/home.page.vue'
-import LinksPage from '../pages/dashboard/links.page.vue'
+import LinksPage from '../pages/dashboard/links/links.page.vue'
 import SettingsPage from '../pages/dashboard/settings.page.vue'
 import { AuthTokenStorage } from '@/infrastructure/services/auth-token-storage.service'
 import { CheckAuthStatus } from '@/application/use-cases/auth/check-status.usecase'
