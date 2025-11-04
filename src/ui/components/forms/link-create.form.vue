@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
+import type { Rule } from 'ant-design-vue'
 
 interface PropsScheme {
   loading: boolean
@@ -9,6 +10,8 @@ const props = withDefaults(defineProps<PropsScheme>(), {
   loading: false,
 })
 
+const emit = defineEmits(["ok", "cancel"])
+
 interface LinkFormScheme {
   url: string
 }
@@ -17,15 +20,32 @@ const form = reactive<LinkFormScheme>({
   url: '',
 })
 
+const checkUrl = async (_rule: Rule, value: string) => {
+  if( value.trim().length == 0 )
+    return Promise.reject("Por favor ingrese una url")
+  else {
+    const reg: Regexp =
+    /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?$/;
+    if(!reg.test(value)) {
+      return Promise.reject("Por favor ingrese un url válido")
+    }
+
+    return Promise.resolve()
+  }
+}
+
+const rules: Record<string, Rule[]> = {
+  url: [{ require: true, validator: checkUrl, trigger: "change"}]
+}
+
 const handleSubmit = (values: any) => {
   console.log('submitted', values)
+  emit('ok', values)
 }
 
 const handleSubmitFailed = (errorInfo: any) => {
   console.log('failed:', errorInfo)
 }
-
-const emit = defineEmits(['cancel'])
 
 const handleCancel = () => emit('cancel')
 </script>
@@ -33,13 +53,14 @@ const handleCancel = () => emit('cancel')
   <a-form
     :model="form"
     :disabled="props.loading"
+    :rules="rules"
     @finish="handleSubmit"
     @finishFailed="handleSubmitFailed"
   >
     <a-form-item>
       <h1 class="text-2xl font-semibold">Crear nuevo link</h1>
     </a-form-item>
-    <a-form-item name="url" :rules="[{ required: true, message: 'Por favor ingrese un url' }]">
+    <a-form-item name="url">
       <label for="original_url" class="block mb-2 font-bold">Url</label>
       <a-input id="original_url" v-model:value="form.url" placeholder="https://example.com" />
     </a-form-item>

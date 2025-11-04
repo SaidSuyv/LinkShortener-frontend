@@ -1,10 +1,10 @@
 import type { LinkEntity } from '@/domain/entities/link.entity'
-import { LinkRepository } from '@/domain/repositories/link.repository'
+import { RemoteLinkRepository } from '@/domain/repositories/link.repository'
 import AxiosClient from '../api/axios.client'
 import { GetAllLinksApiMapper } from '../mappers/link/get-all.mapper'
 import type { GetAllLinksApiResponse } from '../mappers/link/get-all.response'
 
-export class LinkRepositoryImpl extends LinkRepository {
+export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
   async getAll(): Promise<LinkEntity[]> {
     const { data } = await AxiosClient.get<GetAllLinksApiResponse>('/link')
 

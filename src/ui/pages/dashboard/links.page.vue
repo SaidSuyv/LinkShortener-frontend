@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GetAllLinksUseCase } from '@/application/use-cases/link/get-all.usecase'
-import { LinkRepositoryImpl } from '@/infrastructure/repositories/link.repository'
+import { RenoteLinkRepositoryImpl } from '@/infrastructure/repositories/link.repository'
 import { onMounted, ref } from 'vue'
 import pageHeaderComponent from '@/ui/components/utils/page-header.component.vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
@@ -41,7 +41,8 @@ const handleDialogOpen = () => {
 }
 
 const onFetchData = async () => {
-  const data = await GetAllLinksUseCase(new LinkRepositoryImpl())
+  const tokenService = new AuthTokenService()
+  const data = await GetAllLinksUseCase(new RemoteLinkRepositoryImpl(tokenService))
 
   console.log(data)
 

@@ -1,6 +1,6 @@
 import type { LinkEntity } from "@/domain/entities/link.entity";
-import type { LinkRepository } from "@/domain/repositories/link.repository";
+import type { RemoteLinkRepository } from "@/domain/repositories/link.repository";
 
-export const GetAllLinksUseCase = async (repo: LinkRepository): Promise<LinkEntity[]> => {
+export const GetAllLinksUseCase = async (repo: RemoteLinkRepository): Promise<LinkEntity[]> => {
     return await repo.getAll();
 }

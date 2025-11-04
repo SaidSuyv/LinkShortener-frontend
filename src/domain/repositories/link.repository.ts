@@ -1,6 +1,6 @@
 import type { LinkEntity } from '../entities/link.entity'
 
-export abstract class LinkRepository {
+export abstract class RemoteLinkRepository {
   abstract getAll(): Promise<LinkEntity[]>
   abstract create(url: string): Promise<void>
   abstract update(id: number, data: any): Promise<void>
