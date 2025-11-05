@@ -41,6 +41,12 @@ const columns = [
     responsive: ['md'],
   },
   {
+    title: 'Fecha de expiración',
+    dataIndex: 'expiration_at',
+    key: 'expiration_at',
+    sorter: true,
+  },
+  {
     title: 'Acciones',
     key: 'actions',
   },
@@ -116,6 +122,9 @@ onMounted(() => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'created_at'">
           {{ new Date(record.created_at).toLocaleString() }}
+        </template>
+        <template v-else-if="column.key === 'expiration_at'">
+          {{ new Date(record.expiration_at).toLocaleString() }}
         </template>
         <template v-else-if="column.key === 'actions'">
           <a-space>

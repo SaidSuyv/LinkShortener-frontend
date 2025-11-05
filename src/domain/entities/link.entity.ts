@@ -5,4 +5,5 @@ export interface LinkEntity {
     created_at: string | Date;
     updated_at: string | Date;
     deleted_at: string | Date | null;
+    expiration_at: string | Date | null;
 }

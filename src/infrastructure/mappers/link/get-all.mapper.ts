@@ -18,6 +18,7 @@ export class GetAllLinksApiMapper {
           created_at: e.created_at,
           updated_at: e.updated_at,
           deleted_at: e.deleted_at,
+          expiration_at: e.expiration_at,
         }
       })
     else return []

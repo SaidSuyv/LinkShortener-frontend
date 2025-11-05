@@ -39,6 +39,7 @@ const rules: Record<string, Rule[]> = {
 
 const handleSubmit = (values: any) => {
   emit('ok', values)
+  form.url = ''
 }
 
 const handleSubmitFailed = (errorInfo: any) => {

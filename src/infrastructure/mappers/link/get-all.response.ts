@@ -10,6 +10,7 @@ export interface GetAllLinksApiResponse {
       created_at: string
       updated_at: string
       deleted_at: string
+      expiration_at: string
     },
   ]
 }

@@ -25,7 +25,7 @@ const handleSubmit = async (values: any) => {
   const useCase = new CreateLinkUseCase(provider)
   await useCase.execute(url)
 
-  isLoading.value = true
+  isLoading.value = false
 
   emit('onUploaded')
   onCloseDialog()
