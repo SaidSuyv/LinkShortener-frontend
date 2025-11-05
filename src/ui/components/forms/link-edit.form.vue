@@ -41,12 +41,7 @@ const rules: Record<string, Rule[]> = {
 }
 
 const handleSubmit = (values: any) => {
-  console.log('check submit form', values)
   emit('ok', values)
-}
-
-const handleSubmitFailed = (errorInfo: any) => {
-  console.log('failed:', errorInfo)
 }
 
 const handleCancel = () => emit('cancel')
@@ -54,20 +49,13 @@ const handleCancel = () => emit('cancel')
 watch(
   props.data,
   (v) => {
-    console.log('check watch', v)
     form.url = v.url
   },
   { immediate: true }
 )
 </script>
 <template>
-  <a-form
-    :model="form"
-    :disabled="props.loading"
-    :rules="rules"
-    @finish="handleSubmit"
-    @finishFailed="handleSubmitFailed"
-  >
+  <a-form :model="form" :disabled="props.loading" :rules="rules" @finish="handleSubmit">
     <a-form-item>
       <h1 class="text-2xl font-semibold">Editar link</h1>
     </a-form-item>

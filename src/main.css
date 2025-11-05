@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --text-color: #FBFFF1;
+  --text-color: #fbfff1;
   --primary-color: #3d52d5;
   --secondary-color: #b4c5e4;
   --contrast-color: #090c9b;
@@ -12,7 +12,6 @@ html,
 body,
 div#app {
   min-height: 100dvh;
-  height: 100%;
   font-family: 'Instrumental Sans', sans-serif !important;
   color: var(--text-color);
 }

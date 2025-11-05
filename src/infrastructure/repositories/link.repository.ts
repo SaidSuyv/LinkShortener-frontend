@@ -5,8 +5,21 @@ import { GetAllLinksApiMapper } from '../mappers/link/get-all.mapper'
 import type { GetAllLinksApiResponse } from '../mappers/link/get-all.response'
 
 export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
-  async getAll(): Promise<LinkEntity[]> {
-    const { data } = await AxiosClient.get<GetAllLinksApiResponse>('/link')
+  async getAll(state?: string): Promise<LinkEntity[]> {
+    var url = '/link'
+
+    if (typeof state != 'undefined') {
+      switch (state) {
+        case 'active':
+          url += '?state=active'
+          break
+        case 'inactive':
+          url += '?state=inactive'
+          break
+      }
+    }
+
+    const { data } = await AxiosClient.get<GetAllLinksApiResponse>(url)
 
     const GetAllLinksApiMapperInstance = new GetAllLinksApiMapper(data)
 
@@ -15,13 +28,11 @@ export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
 
   async create(url: string): Promise<void> {
     const { data } = await AxiosClient.post('/link', { url })
-
     return data.data
   }
 
   async update(id: number, updated: any): Promise<void> {
     const { data } = await AxiosClient.put(`/link/${id}`, updated)
-
     return data.data
   }
 
@@ -29,7 +40,8 @@ export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
     const { data } = await AxiosClient.delete(`/link/${id}`)
     return data.data
   }
-  restore(id: number): Promise<void> {
-    throw new Error('Method not implemented.')
+  async restore(id: number): Promise<void> {
+    const { data } = await AxiosClient.post(`/link/restore/${id}`)
+    return data.data
   }
 }

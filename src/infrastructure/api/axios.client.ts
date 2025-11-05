@@ -29,7 +29,7 @@ AxiosClient.interceptors.response.use(
   (error) => {
     if (isAxiosError(error)) {
       if (typeof error.response?.data != 'undefined') {
-        console.log(error.response.data.message)
+        console.error(error.response.data.message)
         return Promise.reject(new Error(error.response.data.message))
       } else return Promise.reject(new Error('Hubo un error con el servidor, intentelo más tarde'))
     } else return Promise.reject(error)

@@ -14,7 +14,6 @@ const data = reactive<{ id: number | null; url: string | null }>({
 })
 
 const onOpenDialog = (inp: { id: number; url: string }) => {
-  console.log('cheking inp', inp)
   data.id = inp.id
   data.url = inp.url
   openDialog.value = true

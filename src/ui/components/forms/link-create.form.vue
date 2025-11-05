@@ -42,20 +42,10 @@ const handleSubmit = (values: any) => {
   form.url = ''
 }
 
-const handleSubmitFailed = (errorInfo: any) => {
-  console.log('failed:', errorInfo)
-}
-
 const handleCancel = () => emit('cancel')
 </script>
 <template>
-  <a-form
-    :model="form"
-    :disabled="props.loading"
-    :rules="rules"
-    @finish="handleSubmit"
-    @finishFailed="handleSubmitFailed"
-  >
+  <a-form :model="form" :disabled="props.loading" :rules="rules" @finish="handleSubmit">
     <a-form-item>
       <h1 class="text-2xl font-semibold">Crear nuevo link</h1>
     </a-form-item>
