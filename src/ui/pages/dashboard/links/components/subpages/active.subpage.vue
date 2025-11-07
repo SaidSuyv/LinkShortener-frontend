@@ -52,6 +52,16 @@ const columns: ColumnProps[] = [
 const items = ref<any[]>([])
 const isLoading = ref<boolean>(false)
 
+type Key = string | number;
+const rowKeys = reactive<{selected: Key[]}>({
+  selected: []
+})
+
+const onSelectedRowKey = (selectedRowKeys: Key[]) => {
+  console.log("selected row keys",selectedRowKeys)
+  rowKeys.selected = selectedRowKeys
+}
+
 const emit = defineEmits(['onReload'])
 
 const EditLinkDialogRef = ref<InstanceType<typeof EditLinkDialog>>()
@@ -82,11 +92,16 @@ const handleDeleteDialog = (id: number) => {
   })
 }
 
+const formatData = (data: any[]) => data.map((item, index) => ({
+  key: index,
+  ...item
+}))
+
 const onFetchData = async () => {
   isLoading.value = true
   const data = await GetAllActiveLinksUseCase(new RemoteLinkRepositoryImpl())
 
-  items.value = data
+  items.value = formatData(data)
 
   isLoading.value = false
 }
@@ -110,6 +125,7 @@ defineExpose({ onFetchData })
     :pagination="paginationConfig"
     :scroll="{ x: 'max-content' }"
     table-layout="fixed"
+    :row-selection="{ selectedRowKeys: rowKeys.selected, onChange: onSelectedRowKey }"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'created_at'">

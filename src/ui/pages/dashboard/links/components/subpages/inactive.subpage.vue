@@ -50,7 +50,7 @@ const columns: ColumnProps[] = [
   },
 ]
 
-const items = ref<LinkEntity[]>()
+const items = ref<any[]>()
 const isLoading = ref<boolean>(false)
 
 const emit = defineEmits(['onReload'])

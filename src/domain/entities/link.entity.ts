@@ -1,5 +1,6 @@
 export interface LinkEntity {
     id: number;
+    key?: string | number;
     original_url: string;
     code: string;
     created_at: string | Date;
