@@ -7,6 +7,7 @@ import { RemoteLinkRepositoryImpl } from '@/infrastructure/repositories/link.rep
 import { DeleteLinkUseCase } from '@/application/use-cases/link/delete.usecase'
 import { GetAllActiveLinksUseCase } from '@/application/use-cases/link/get-all-active.usecase'
 import type { ColumnProps } from 'ant-design-vue/es/table'
+import type { LinkEntity } from '@/domain/entities/link.entity'
 
 const columns: ColumnProps[] = [
   {
@@ -49,7 +50,7 @@ const columns: ColumnProps[] = [
   },
 ]
 
-const items = ref<any[]>([])
+const items = ref<LinkEntity[]>([])
 const isLoading = ref<boolean>(false)
 
 type Key = string | number;
@@ -92,14 +93,17 @@ const handleDeleteDialog = (id: number) => {
   })
 }
 
-const formatData = (data: any[]) => data.map((item, index) => ({
-  key: index,
+const formatData = (data: LinkEntity[]) => data.map((item: LinkEntity) => ({
+  key: item.id,
   ...item
 }))
 
 const onFetchData = async () => {
   isLoading.value = true
-  const data = await GetAllActiveLinksUseCase(new RemoteLinkRepositoryImpl())
+
+  const provider = new RemoteLinkRepositoryImpl()
+  const usecase = new GetAllActiveLinksUseCase(provider)
+  const data = await usecase.execute()
 
   items.value = formatData(data)
 

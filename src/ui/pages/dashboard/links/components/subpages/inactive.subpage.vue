@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { GetAllInactiveLinksUseCase } from '@/application/use-cases/link/get-all-inactive.usecase'
 import { RestoreLinkUseCase } from '@/application/use-cases/link/restore.usecase'
+import { HardDeleteLinkUseCase } from '@/application/use-cases/link/hard-delete.usecase'
 import type { LinkEntity } from '@/domain/entities/link.entity'
 import { RemoteLinkRepositoryImpl } from '@/infrastructure/repositories/link.repository'
-import { CheckOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { HistoryOutlined, ExclamationCircleOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
 import type { ColumnProps } from 'ant-design-vue/es/table'
 import { createVNode, h, onBeforeMount, onMounted, reactive, ref, watch } from 'vue'
@@ -50,8 +51,18 @@ const columns: ColumnProps[] = [
   },
 ]
 
-const items = ref<any[]>()
+const items = ref<LinkEntity[]>([])
 const isLoading = ref<boolean>(false)
+
+type Key = string | number;
+const rowKeys = reactive<{ selected: Key[] }>({
+  selected: []
+})
+
+const onSelectedRowKey = (selectedRowKeys: Key[]) => {
+  console.log("selected row keys", selectedRowKeys)
+  rowKeys.selected = selectedRowKeys
+}
 
 const emit = defineEmits(['onReload'])
 
@@ -75,15 +86,46 @@ const handleRestoreLinkDialog = (id: number) => {
   })
 }
 
+const handleDeleteLinkDialog = (id: number) => {
+  Modal.confirm({
+    title: '¿Deseas eliminar permanentemente este link?',
+    icon: createVNode(DeleteOutlined),
+    content: 'No se podrá recuperar este link, se irá por mucho...mucho tiempo',
+    okText: 'Si',
+    cancelText: 'No',
+    okType: 'danger',
+    centered: true,
+    async onOk() {
+      isLoading.value = true
+      const provider = new RemoteLinkRepositoryImpl()
+      const usecase = new HardDeleteLinkUseCase(provider)
+      await usecase.execute(id)
+      isLoading.value = false
+      emit('onReload')
+    }
+  })
+}
+
+const formatData = (data: LinkEntity[]) => data.map((item: LinkEntity) => ({
+  key: item.id,
+  ...item
+}))
+
 const onFetchData = async () => {
   isLoading.value = true
 
-  const data = await GetAllInactiveLinksUseCase(new RemoteLinkRepositoryImpl())
+  const provider = new RemoteLinkRepositoryImpl()
+  const usecase = new GetAllInactiveLinksUseCase(provider)
+  const data = await usecase.execute()
 
-  items.value = data
+  items.value = formatData(data)
 
   isLoading.value = false
 }
+
+const handleRestoreBulk = () => {}
+
+const handleDeleteBulk = () => {}
 
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
@@ -96,13 +138,18 @@ onMounted(() => {
 defineExpose({ onFetchData })
 </script>
 <template>
+  <a-space class="mb-5">
+    <a-button type="primary" :disabled="rowKeys.selected.length == 0" @click="handleRestoreBulk">Restaurar links</a-button>
+    <a-button danger type="primary" :disabled="rowKeys.selected.length == 0" @click="handleDeleteBulk">Eliminar permanentemente</a-button>
+  </a-space>
   <a-table
     :loading="isLoading"
-    :dataSource="items"
+    :data-source="items"
     :columns="columns"
     :pagination="paginationConfig"
     :scroll="{ x: 'max-content' }"
     table-layout="fixed"
+    :row-selection="{ selectedRowKeys: rowKeys.selected, onChange: onSelectedRowKey }"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'created_at'">
@@ -118,11 +165,21 @@ defineExpose({ onFetchData })
         <a-space>
           <a-tooltip title="Resturar">
             <a-button
-              :icon="h(CheckOutlined)"
+              :icon="h(HistoryOutlined)"
               shape="circle"
               type="primary"
               class="!flex items-center justify-center"
               @click="handleRestoreLinkDialog(record.id)"
+            />
+          </a-tooltip>
+          <a-tooltip title="Eliminar permanentemente">
+            <a-button
+                :icon="h(DeleteOutlined)"
+                shape="circle"
+                type="primary"
+                danger
+                class="flex! items-center justify-center"
+                @click="handleDeleteLinkDialog(record.id)"
             />
           </a-tooltip>
         </a-space>

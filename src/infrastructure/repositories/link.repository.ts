@@ -40,6 +40,12 @@ export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
     const { data } = await AxiosClient.delete(`/link/${id}`)
     return data.data
   }
+
+  async hardRemove(id: number): Promise<void> {
+    const { data } = await AxiosClient.delete(`/link/${id}/?hard`)
+    return data.data
+  }
+
   async restore(id: number): Promise<void> {
     const { data } = await AxiosClient.post(`/link/restore/${id}`)
     return data.data
