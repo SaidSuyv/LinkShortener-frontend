@@ -53,13 +53,13 @@ const columns: ColumnProps[] = [
 const items = ref<LinkEntity[]>([])
 const isLoading = ref<boolean>(false)
 
-type Key = string | number;
-const rowKeys = reactive<{selected: Key[]}>({
-  selected: []
+type Key = string | number
+const rowKeys = reactive<{ selected: Key[] }>({
+  selected: [],
 })
 
 const onSelectedRowKey = (selectedRowKeys: Key[]) => {
-  console.log("selected row keys",selectedRowKeys)
+  console.log('selected row keys', selectedRowKeys)
   rowKeys.selected = selectedRowKeys
 }
 
@@ -93,10 +93,11 @@ const handleDeleteDialog = (id: number) => {
   })
 }
 
-const formatData = (data: LinkEntity[]) => data.map((item: LinkEntity) => ({
-  key: item.id,
-  ...item
-}))
+const formatData = (data: LinkEntity[]) =>
+  data.map((item: LinkEntity) => ({
+    key: item.id,
+    ...item,
+  }))
 
 const onFetchData = async () => {
   isLoading.value = true
@@ -110,6 +111,8 @@ const onFetchData = async () => {
   isLoading.value = false
 }
 
+const handleDeleteBulkDialog = async () => {}
+
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
@@ -122,6 +125,15 @@ defineExpose({ onFetchData })
 </script>
 <template>
   <edit-link-dialog ref="EditLinkDialogRef" @on-uploaded="onFetchData" />
+  <a-space class="mb-5">
+    <a-button
+      danger
+      type="primary"
+      :disabled="rowKeys.selected.length == 0"
+      @click="handleDeleteBulkDialog"
+      >Desactivar seleccionados</a-button
+    >
+  </a-space>
   <a-table
     :loading="isLoading"
     :data-source="items"
