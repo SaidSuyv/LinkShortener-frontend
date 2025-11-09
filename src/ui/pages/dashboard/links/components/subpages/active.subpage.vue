@@ -8,6 +8,7 @@ import { DeleteLinkUseCase } from '@/application/use-cases/link/delete.usecase'
 import { GetAllActiveLinksUseCase } from '@/application/use-cases/link/get-all-active.usecase'
 import type { ColumnProps } from 'ant-design-vue/es/table'
 import type { LinkEntity } from '@/domain/entities/link.entity'
+import { DeleteBulkLinksUseCase } from '@/application/use-cases/link/delete-bulk.usecase'
 
 const columns: ColumnProps[] = [
   {
@@ -111,7 +112,28 @@ const onFetchData = async () => {
   isLoading.value = false
 }
 
-const handleDeleteBulkDialog = async () => {}
+const handleDeleteBulkDialog = async () => {
+  Modal.confirm({
+    title: '¿Seguro de borrar los URLs seleccionados?',
+    icon: createVNode(ExclamationCircleOutlined),
+    content: 'Eliminarlos al mismo tiempo podría demorar un rato',
+    okText: 'Si',
+    okType: 'danger',
+    cancelText: 'No',
+    centered: true,
+    async onOk() {
+      isLoading.value = true
+
+      const provider = new RemoteLinkRepositoryImpl()
+      const usecase = new DeleteBulkLinksUseCase(provider)
+      const data = await usecase.execute(rowKeys.selected)
+
+      console.log('ui end data', data)
+      isLoading.value = false
+      emit('onReload')
+    },
+  })
+}
 
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
