@@ -56,8 +56,18 @@ export class RemoteLinkRepositoryImpl extends RemoteLinkRepository {
     return data.data
   }
 
-  async deleteBulk(items: any[]): Promise<void> {
+  async deleteBulk(items: any[]): Promise<any> {
     const { data } = await AxiosClient.post('/link/bulk/delete', { items })
+    return data.data
+  }
+
+  async restoreBulk(items: any[]): Promise<any> {
+    const { data } = await AxiosClient.post('/link/bulk/restore', { items })
+    return data.data
+  }
+
+  async hardDeleteBulk(items: any[]): Promise<any> {
+    const { data } = await AxiosClient.post('/link/bulk/hard-delete', { items })
     return data.data
   }
 }

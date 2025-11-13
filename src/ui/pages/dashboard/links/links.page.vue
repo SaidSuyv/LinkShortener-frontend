@@ -26,44 +26,40 @@ const handleUploaded = () => {
 }
 
 const handleTabChange = (ev: any) => {
-  console.log('ev',ev)
-  switch(ev){
+  console.log('ev', ev)
+  switch (ev) {
     case '1':
       ActiveSubpageRef.value?.onFetchData()
-      break;
+      break
     case '2':
       InactiveSubpageRef.value?.onFetchData()
-      break;
+      break
   }
 }
 
 const handleCheckStatusBulk = (id: string) => {
-  let timer = null
+  let timer: any = null
   const checkTimeSpan = 500 // 1seg
 
   CheckStatusBulkDialogRef.value?.openDialog()
 
-  timer = setInterval(
-    async () => {
-      const provider = new RemoteLinkRepositoryImpl()
-      const usecase = new CheckStatusBulkUseCase(provider)
-      const { progress, finished } = await usecase.execute(id)
+  timer = setInterval(async () => {
+    const provider = new RemoteLinkRepositoryImpl()
+    const usecase = new CheckStatusBulkUseCase(provider)
+    const { progress, finished } = await usecase.execute(id)
 
-      CheckStatusBulkDialogRef.value?.onUpdateData(progress, finished)
+    CheckStatusBulkDialogRef.value?.onUpdateData(progress, finished)
 
-      if(finished) {
-        clearInterval(timer)
-        handleUploaded()
-      }
-    },
-    checkTimeSpan
-  )
+    if (finished) {
+      clearInterval(timer)
+      handleUploaded()
+    }
+  }, checkTimeSpan)
 }
-
 </script>
 <template>
   <create-link-dialog ref="CreateLinkDialogRef" @on-uploaded="handleUploaded" />
-  <check-status-bulk-dialog ref="CheckStatusBulkDialogRef"/>
+  <check-status-bulk-dialog ref="CheckStatusBulkDialogRef" />
   <page-header-component title="Mis links" />
   <a-space>
     <a-button type="primary" class="!flex items-center justify-center" @click="handleCreateDialog">
@@ -73,11 +69,18 @@ const handleCheckStatusBulk = (id: string) => {
   </a-space>
   <a-tabs @change="handleTabChange">
     <a-tab-pane key="1" tab="Activos">
-      <active-subpage ref="ActiveSubpageRef" @on-reload="handleUploaded"
-        @on-check-status-bulk="handleCheckStatusBulk($event)"/>
+      <active-subpage
+        ref="ActiveSubpageRef"
+        @on-reload="handleUploaded"
+        @on-check-status-bulk="handleCheckStatusBulk($event)"
+      />
     </a-tab-pane>
     <a-tab-pane key="2" tab="Inactivos">
-      <inactive-subpage ref="InactiveSubpageRef" @on-reload="handleUploaded" />
+      <inactive-subpage
+        ref="InactiveSubpageRef"
+        @on-reload="handleUploaded"
+        @on-check-status-bulk="handleCheckStatusBulk($event)"
+      />
     </a-tab-pane>
   </a-tabs>
 </template>

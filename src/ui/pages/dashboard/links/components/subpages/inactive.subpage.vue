@@ -8,6 +8,8 @@ import { HistoryOutlined, ExclamationCircleOutlined, DeleteOutlined } from '@ant
 import { Modal } from 'ant-design-vue'
 import type { ColumnProps } from 'ant-design-vue/es/table'
 import { createVNode, h, onBeforeMount, onMounted, reactive, ref, watch } from 'vue'
+import { RestoreBulkLinksUseCase } from '@/application/use-cases/link/restore-bulk.usecase'
+import { HardDeleteBulkLinksUseCase } from '@/application/use-cases/link/hard-delete-bulk.usecase'
 
 const columns: ColumnProps[] = [
   {
@@ -54,17 +56,17 @@ const columns: ColumnProps[] = [
 const items = ref<LinkEntity[]>([])
 const isLoading = ref<boolean>(false)
 
-type Key = string | number;
+type Key = string | number
 const rowKeys = reactive<{ selected: Key[] }>({
-  selected: []
+  selected: [],
 })
 
 const onSelectedRowKey = (selectedRowKeys: Key[]) => {
-  console.log("selected row keys", selectedRowKeys)
+  console.log('selected row keys', selectedRowKeys)
   rowKeys.selected = selectedRowKeys
 }
 
-const emit = defineEmits(['onReload'])
+const emit = defineEmits(['onReload', 'onCheckStatusBulk'])
 
 const handleRestoreLinkDialog = (id: number) => {
   Modal.confirm({
@@ -102,17 +104,18 @@ const handleDeleteLinkDialog = (id: number) => {
       await usecase.execute(id)
       isLoading.value = false
       emit('onReload')
-    }
+    },
   })
 }
 
-const formatData = (data: LinkEntity[]) => data.map((item: LinkEntity) => ({
-  key: item.id,
-  ...item
-}))
+const formatData = (data: LinkEntity[]) =>
+  data.map((item: LinkEntity) => ({
+    key: item.id,
+    ...item,
+  }))
 
 const onFetchData = async () => {
-  console.log("inactive fetched")
+  console.log('inactive fetched')
   isLoading.value = true
 
   const provider = new RemoteLinkRepositoryImpl()
@@ -124,26 +127,75 @@ const onFetchData = async () => {
   isLoading.value = false
 }
 
-const handleRestoreBulk = () => {}
+const handleRestoreBulk = async () => {
+  Modal.confirm({
+    title: '¿Deseas restaurar todos los URLs seleccionados?',
+    icon: createVNode(HistoryOutlined),
+    content: 'Resturarlos todos podría tomar un tiempo',
+    okText: 'Si',
+    okType: 'primary',
+    cancelText: 'No',
+    centered: true,
+    async onOk() {
+      isLoading.value = true
 
-const handleDeleteBulk = () => {}
+      const provider = new RemoteLinkRepositoryImpl()
+      const usecase = new RestoreBulkLinksUseCase(provider)
+      const data = await usecase.execute(rowKeys.selected)
+
+      isLoading.value = false
+      rowKeys.selected = []
+      emit('onCheckStatusBulk', data.batch_id)
+    },
+  })
+}
+
+const handleDeleteBulk = async () => {
+  Modal.confirm({
+    title: '¿Deseas eliminar permanentemente todos los URLs seleccionados?',
+    icon: createVNode(DeleteOutlined),
+    content:
+      'PELIGRO: SE ELIMINARAN TODOS LOS LINKS PERMANENTEMENTE!!! Eliminarlos todos podría tomar un tiempo',
+    okText: 'Si',
+    okType: 'danger',
+    cancelText: 'No',
+    centered: true,
+    async onOk() {
+      isLoading.value = true
+
+      const provider = new RemoteLinkRepositoryImpl()
+      const usecase = new HardDeleteBulkLinksUseCase(provider)
+      const data = await usecase.execute(rowKeys.selected)
+
+      isLoading.value = false
+      rowKeys.selected = []
+      emit('onCheckStatusBulk', data.batch_id)
+    },
+  })
+}
 
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
 
-onMounted(
-  () => {
-    onFetchData()
-  }
-)
+onMounted(() => {
+  onFetchData()
+})
 
 defineExpose({ onFetchData })
 </script>
 <template>
   <a-space class="mb-5">
-    <a-button type="primary" :disabled="rowKeys.selected.length == 0" @click="handleRestoreBulk">Restaurar links</a-button>
-    <a-button danger type="primary" :disabled="rowKeys.selected.length == 0" @click="handleDeleteBulk">Eliminar permanentemente</a-button>
+    <a-button type="primary" :disabled="rowKeys.selected.length == 0" @click="handleRestoreBulk"
+      >Restaurar links</a-button
+    >
+    <a-button
+      danger
+      type="primary"
+      :disabled="rowKeys.selected.length == 0"
+      @click="handleDeleteBulk"
+      >Eliminar permanentemente</a-button
+    >
   </a-space>
   <a-table
     :loading="isLoading"
@@ -177,12 +229,12 @@ defineExpose({ onFetchData })
           </a-tooltip>
           <a-tooltip title="Eliminar permanentemente">
             <a-button
-                :icon="h(DeleteOutlined)"
-                shape="circle"
-                type="primary"
-                danger
-                class="flex! items-center justify-center"
-                @click="handleDeleteLinkDialog(record.id)"
+              :icon="h(DeleteOutlined)"
+              shape="circle"
+              type="primary"
+              danger
+              class="flex! items-center justify-center"
+              @click="handleDeleteLinkDialog(record.id)"
             />
           </a-tooltip>
         </a-space>

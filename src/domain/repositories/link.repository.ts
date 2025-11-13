@@ -9,5 +9,7 @@ export abstract class RemoteLinkRepository {
   abstract restore(id: number): Promise<void>
 
   abstract statusBulk(id: string): Promise<any>
-  abstract deleteBulk(items: any[]): Promise<void>
+  abstract deleteBulk(items: any[]): Promise<any>
+  abstract restoreBulk(items: any[]): Promise<any>
+  abstract hardDeleteBulk(items: any[]): Promise<any>
 }

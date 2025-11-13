@@ -1,9 +1,9 @@
 import type { RemoteLinkRepository } from '@/domain/repositories/link.repository'
 
-export class DeleteBulkLinksUseCase {
+export class HardDeleteBulkLinksUseCase {
   constructor(private readonly provider: RemoteLinkRepository) {}
 
   execute(items: any[]): Promise<any> {
-    return this.provider.deleteBulk(items)
+    return this.provider.hardDeleteBulk(items)
   }
 }
