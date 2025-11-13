@@ -8,5 +8,6 @@ export abstract class RemoteLinkRepository {
   abstract hardRemove(id: number): Promise<void>
   abstract restore(id: number): Promise<void>
 
+  abstract statusBulk(id: string): Promise<any>
   abstract deleteBulk(items: any[]): Promise<void>
 }

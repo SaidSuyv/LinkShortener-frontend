@@ -112,6 +112,7 @@ const formatData = (data: LinkEntity[]) => data.map((item: LinkEntity) => ({
 }))
 
 const onFetchData = async () => {
+  console.log("inactive fetched")
   isLoading.value = true
 
   const provider = new RemoteLinkRepositoryImpl()
@@ -131,9 +132,11 @@ const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
 
-onMounted(() => {
-  onFetchData()
-})
+onMounted(
+  () => {
+    onFetchData()
+  }
+)
 
 defineExpose({ onFetchData })
 </script>

@@ -64,7 +64,7 @@ const onSelectedRowKey = (selectedRowKeys: Key[]) => {
   rowKeys.selected = selectedRowKeys
 }
 
-const emit = defineEmits(['onReload'])
+const emit = defineEmits(['onReload','onCheckStatusBulk'])
 
 const EditLinkDialogRef = ref<InstanceType<typeof EditLinkDialog>>()
 
@@ -101,6 +101,7 @@ const formatData = (data: LinkEntity[]) =>
   }))
 
 const onFetchData = async () => {
+  console.log("active fetched")
   isLoading.value = true
 
   const provider = new RemoteLinkRepositoryImpl()
@@ -130,7 +131,8 @@ const handleDeleteBulkDialog = async () => {
 
       console.log('ui end data', data)
       isLoading.value = false
-      emit('onReload')
+      rowKeys.selected = []
+      emit('onCheckStatusBulk', data.batch_id)
     },
   })
 }
@@ -139,9 +141,11 @@ const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
 
-onMounted(() => {
-  onFetchData()
-})
+onMounted(
+  () => {
+    onFetchData()
+  }
+)
 
 defineExpose({ onFetchData })
 </script>
@@ -156,6 +160,7 @@ defineExpose({ onFetchData })
       >Desactivar seleccionados</a-button
     >
   </a-space>
+      <p v-if="rowKeys.selected.length > 0" class="mb-5">{{ rowKeys.selected.length }} links seleccionados</p>
   <a-table
     :loading="isLoading"
     :data-source="items"
