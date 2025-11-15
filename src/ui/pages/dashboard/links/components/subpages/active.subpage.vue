@@ -64,7 +64,7 @@ const onSelectedRowKey = (selectedRowKeys: Key[]) => {
   rowKeys.selected = selectedRowKeys
 }
 
-const emit = defineEmits(['onReload','onCheckStatusBulk'])
+const emit = defineEmits(['onReload', 'onCheckStatusBulk'])
 
 const EditLinkDialogRef = ref<InstanceType<typeof EditLinkDialog>>()
 
@@ -101,7 +101,7 @@ const formatData = (data: LinkEntity[]) =>
   }))
 
 const onFetchData = async () => {
-  console.log("active fetched")
+  console.log('active fetched')
   isLoading.value = true
 
   const provider = new RemoteLinkRepositoryImpl()
@@ -137,21 +137,26 @@ const handleDeleteBulkDialog = async () => {
   })
 }
 
+const handleSelectAll = () => {
+  rowKeys.selected = items.value.map((e) => e.id)
+}
+
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
 
-onMounted(
-  () => {
-    onFetchData()
-  }
-)
+onMounted(() => {
+  onFetchData()
+})
 
 defineExpose({ onFetchData })
 </script>
 <template>
   <edit-link-dialog ref="EditLinkDialogRef" @on-uploaded="onFetchData" />
   <a-space class="mb-5">
+    <a-button type="primary" :disabled="rowKeys.selected.length > 0" @click="handleSelectAll"
+      >Seleccionar todo</a-button
+    >
     <a-button
       danger
       type="primary"
@@ -160,7 +165,9 @@ defineExpose({ onFetchData })
       >Desactivar seleccionados</a-button
     >
   </a-space>
-      <p v-if="rowKeys.selected.length > 0" class="mb-5">{{ rowKeys.selected.length }} links seleccionados</p>
+  <p v-if="rowKeys.selected.length > 0" class="mb-5">
+    {{ rowKeys.selected.length }} links seleccionados
+  </p>
   <a-table
     :loading="isLoading"
     :data-source="items"

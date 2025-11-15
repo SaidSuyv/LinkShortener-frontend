@@ -174,6 +174,10 @@ const handleDeleteBulk = async () => {
   })
 }
 
+const handleSelectAll = () => {
+  rowKeys.selected = items.value.map((e) => e.id)
+}
+
 const paginationConfig = reactive<{ pageSize: number }>({
   pageSize: 5,
 })
@@ -186,6 +190,9 @@ defineExpose({ onFetchData })
 </script>
 <template>
   <a-space class="mb-5">
+    <a-button type="primary" :disabled="rowKeys.selected.length > 0" @click="handleSelectAll"
+      >Seleccionar todo</a-button
+    >
     <a-button type="primary" :disabled="rowKeys.selected.length == 0" @click="handleRestoreBulk"
       >Restaurar links</a-button
     >
